@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeedIt — You Post. Brands Compete.</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root {
+  --ink:    #0d0d0d;
+  --ink-2:  #1a1a1a;
+  --ink-3:  #2a2a2a;
+  --muted:  #6b6b6b;
+  --border: #2e2e2e;
+  --white:  #ffffff;
+  --off:    #f5f3ef;
+  --orange: #ff5c00;
+  --orange-dim: rgba(255,92,0,0.12);
+  --orange-glow: rgba(255,92,0,0.25);
+  --green:  #22c55e;
+  --blue:   #3b82f6;
+  --purple: #a855f7;
+  --r:      16px;
+  --r-sm:   10px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--ink);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 5%; height: 64px;
+  background: rgba(13,13,13,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900; font-size:1.4rem;
+  color:var(--white); text-decoration:none; display:flex; align-items:center; gap:6px;
+}
+.nav-logo .logo-dot { color:var(--orange); }
+.nav-pill {
+  background: var(--orange); color:var(--white);
+  padding: 0.5rem 1.3rem; border-radius:999px;
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.85rem;
+  text-decoration:none; transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 0 0 var(--orange-glow);
+}
+.nav-pill:hover { transform:scale(1.04); box-shadow: 0 0 24px var(--orange-glow); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a { font-size:0.875rem; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+.nav-links a:hover { color:var(--white); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding: 120px 5% 80px;
+  position:relative; overflow:hidden;
+}
+.hero-bg-circle {
+  position:absolute; top:-20%; right:-15%;
+  width:800px; height:800px; border-radius:50%;
+  background: radial-gradient(circle, rgba(255,92,0,0.08) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-bg-circle-2 {
+  position:absolute; bottom:-30%; left:-10%;
+  width:600px; height:600px; border-radius:50%;
+  background: radial-gradient(circle, rgba(255,92,0,0.05) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-inner {
+  max-width:1200px; margin:0 auto; width:100%;
+  position:relative; z-index:2;
+}
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border); border-radius:999px;
+  padding:5px 14px 5px 5px; margin-bottom:2rem;
+  font-size:0.8rem; color:var(--muted);
+}
+.eyebrow-badge {
+  background:var(--orange); color:white;
+  padding:2px 10px; border-radius:999px;
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.75rem;
+}
+.hero h1 {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size: clamp(3rem, 7vw, 6rem); line-height:1.0;
+  letter-spacing:-0.03em; margin-bottom:1.5rem;
+}
+.hero h1 em { color:var(--orange); font-style:normal; }
+.hero h1 .line-alt { color:var(--muted); }
+.hero-sub {
+  font-size:1.1rem; color:var(--muted); line-height:1.7;
+  max-width:540px; margin-bottom:2.5rem;
+}
+.hero-actions { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+.btn-orange {
+  background:var(--orange); color:white;
+  padding:0.9rem 2rem; border-radius:999px;
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.95rem;
+  border:none; cursor:pointer; text-decoration:none; display:inline-block;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 0 0 var(--orange-glow);
+}
+.btn-orange:hover { transform:translateY(-2px); box-shadow:0 8px 32px var(--orange-glow); }
+.btn-ghost {
+  background:transparent; color:var(--muted);
+  padding:0.9rem 2rem; border-radius:999px;
+  border:1px solid var(--border);
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.95rem;
+  cursor:pointer; text-decoration:none; display:inline-block;
+  transition:border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color:var(--white); color:var(--white); }
+
+/* ─── LIVE FEED DEMO ─── */
+.feed-demo {
+  max-width:1200px; margin:0 auto; padding:0 5% 6rem;
+  position:relative; z-index:2;
+}
+.feed-label {
+  font-family:'Cabinet Grotesk',sans-serif; font-size:0.75rem; font-weight:700;
+  letter-spacing:0.1em; color:var(--muted); text-transform:uppercase;
+  margin-bottom:1.2rem; display:flex; align-items:center; gap:8px;
+}
+.live-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--green);
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.post-card {
+  background:var(--ink-2); border:1px solid var(--border);
+  border-radius:var(--r); padding:1.6rem; margin-bottom:1rem;
+  transition: border-color 0.2s;
+}
+.post-card:hover { border-color:#444; }
+.post-header { display:flex; align-items:center; gap:12px; margin-bottom:1rem; }
+.avatar {
+  width:38px; height:38px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:800; font-size:0.85rem;
+  flex-shrink:0;
+}
+.av-orange { background:var(--orange-dim); color:var(--orange); }
+.av-blue   { background:rgba(59,130,246,0.15); color:var(--blue); }
+.av-purple { background:rgba(168,85,247,0.15); color:var(--purple); }
+.av-green  { background:rgba(34,197,94,0.15); color:var(--green); }
+.post-meta { flex:1; }
+.post-user { font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.9rem; }
+.post-time { font-size:0.75rem; color:var(--muted); margin-top:2px; }
+.need-tag {
+  background:var(--orange-dim); color:var(--orange);
+  font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:999px;
+  font-family:'Cabinet Grotesk',sans-serif;
+}
+.post-text { font-size:0.95rem; color:var(--white); line-height:1.6; margin-bottom:1.2rem; }
+.post-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:1.2rem; }
+.tag {
+  font-size:0.72rem; padding:3px 10px; border-radius:999px;
+  border:1px solid var(--border); color:var(--muted);
+}
+.brand-responses { display:flex; flex-direction:column; gap:0.7rem; }
+.brand-reply {
+  background:var(--ink-3); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:1rem 1.2rem;
+  display:flex; gap:12px; align-items:flex-start;
+  transition: border-color 0.2s;
+}
+.brand-reply:hover { border-color:#555; }
+.brand-logo {
+  width:32px; height:32px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.7rem; font-weight:800; font-family:'Cabinet Grotesk',sans-serif;
+  flex-shrink:0;
+}
+.logo-sony   { background:#1a1a1a; border:1px solid #333; color:#fff; }
+.logo-jbl    { background:#f97316; color:white; }
+.logo-apple  { background:#1c1c1e; border:1px solid #333; color:#fff; }
+.logo-nike   { background:#111; border:1px solid #333; color:#fff; }
+.logo-new    { background:#00b140; color:white; }
+.brand-reply-body { flex:1; }
+.brand-name { font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.85rem; margin-bottom:3px; }
+.brand-text { font-size:0.82rem; color:var(--muted); line-height:1.55; }
+.reply-actions { display:flex; align-items:center; gap:10px; margin-top:8px; }
+.vote-btn {
+  display:flex; align-items:center; gap:4px;
+  background:var(--ink-2); border:1px solid var(--border);
+  border-radius:999px; padding:3px 10px;
+  font-size:0.75rem; color:var(--muted); cursor:pointer;
+  transition:all 0.15s; font-family:'Instrument Sans',sans-serif;
+}
+.vote-btn:hover { border-color:var(--orange); color:var(--orange); }
+.vote-btn.voted { border-color:var(--orange); color:var(--orange); background:var(--orange-dim); }
+.top-pick {
+  font-size:0.7rem; background:rgba(34,197,94,0.12); color:var(--green);
+  padding:3px 10px; border-radius:999px; font-weight:700;
+  font-family:'Cabinet Grotesk',sans-serif;
+}
+
+/* ─── SECTION BASE ─── */
+section { padding:6rem 5%; }
+.section-inner { max-width:1200px; margin:0 auto; }
+.s-tag {
+  display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.1em;
+  color:var(--orange); text-transform:uppercase; margin-bottom:0.8rem;
+}
+.s-head {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size:clamp(1.8rem, 3.5vw, 2.8rem); line-height:1.1;
+  letter-spacing:-0.02em; margin-bottom:1rem;
+}
+.s-sub { font-size:1rem; color:var(--muted); line-height:1.7; max-width:520px; }
+
+/* ─── HOW IT WORKS ─── */
+.how { background:var(--ink-2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.how-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem;
+}
+.how-card {
+  border:1px solid var(--border); border-radius:var(--r); padding:2rem;
+  position:relative; overflow:hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.how-card:hover { border-color:#444; transform:translateY(-3px); }
+.how-num {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size:4rem; line-height:1; color:var(--border);
+  margin-bottom:1rem; letter-spacing:-0.04em;
+}
+.how-icon { font-size:1.8rem; margin-bottom:1rem; display:block; }
+.how-card h3 {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700;
+  font-size:1.05rem; margin-bottom:0.6rem;
+}
+.how-card p { font-size:0.875rem; color:var(--muted); line-height:1.65; }
+.how-card-accent {
+  border-color:var(--orange);
+  background: linear-gradient(135deg, rgba(255,92,0,0.04) 0%, transparent 60%);
+}
+.how-card-accent .how-num { color:rgba(255,92,0,0.15); }
+
+/* ─── FOR USERS / BRANDS split ─── */
+.for-section { background:var(--ink); }
+.for-split {
+  display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:3rem;
+}
+.for-card {
+  border:1px solid var(--border); border-radius:var(--r); padding:2.5rem;
+  position:relative; overflow:hidden;
+}
+.for-card-users { background:var(--ink-2); }
+.for-card-brands {
+  background: linear-gradient(135deg, rgba(255,92,0,0.08) 0%, var(--ink-2) 50%);
+  border-color:rgba(255,92,0,0.25);
+}
+.for-label {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.72rem;
+  letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.2rem;
+  display:inline-block;
+}
+.for-label-u { color:var(--muted); }
+.for-label-b { color:var(--orange); }
+.for-card h3 {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size:1.6rem; line-height:1.2; margin-bottom:1rem; letter-spacing:-0.02em;
+}
+.for-card p { font-size:0.9rem; color:var(--muted); line-height:1.7; margin-bottom:1.5rem; }
+.for-list { list-style:none; display:flex; flex-direction:column; gap:0.7rem; }
+.for-list li {
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:0.875rem; color:var(--muted); line-height:1.5;
+}
+.for-list li::before {
+  content:'→'; color:var(--orange); flex-shrink:0; font-weight:700; margin-top:1px;
+}
+
+/* ─── EXAMPLES ─── */
+.examples { background:var(--ink-2); border-top:1px solid var(--border); }
+.ex-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem;
+}
+.ex-card {
+  background:var(--ink-3); border:1px solid var(--border);
+  border-radius:var(--r); padding:1.6rem;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.ex-card:hover { border-color:#444; transform:translateY(-2px); }
+.ex-need {
+  font-size:0.95rem; font-weight:500; line-height:1.55;
+  margin-bottom:1.2rem; color:var(--white);
+}
+.ex-brands { display:flex; flex-direction:column; gap:0.5rem; }
+.ex-brand {
+  display:flex; align-items:center; gap:8px;
+  font-size:0.8rem; color:var(--muted);
+}
+.ex-brand-dot {
+  width:6px; height:6px; border-radius:50%; flex-shrink:0;
+}
+.dot-green  { background:var(--green); }
+.dot-blue   { background:var(--blue); }
+.dot-orange { background:var(--orange); }
+.dot-purple { background:var(--purple); }
+.ex-footer {
+  margin-top:1.2rem; padding-top:1rem;
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ex-responses {
+  font-size:0.75rem; color:var(--muted);
+}
+.ex-votes {
+  font-size:0.75rem; color:var(--green); font-weight:600;
+  font-family:'Cabinet Grotesk',sans-serif;
+}
+
+/* ─── PRICING ─── */
+.pricing { background:var(--ink); }
+.pricing-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem;
+}
+.pricing-card {
+  border:1px solid var(--border); border-radius:var(--r); padding:2rem;
+  display:flex; flex-direction:column;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.pricing-card:hover { transform:translateY(-3px); }
+.pricing-card-featured {
+  border-color:var(--orange);
+  background:linear-gradient(160deg, rgba(255,92,0,0.06) 0%, transparent 50%);
+  position:relative;
+}
+.featured-badge {
+  position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+  background:var(--orange); color:white;
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.72rem;
+  padding:3px 14px; border-radius:0 0 10px 10px;
+}
+.plan-name {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:0.8rem;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--muted);
+  margin-bottom:0.8rem;
+}
+.plan-price {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size:2.8rem; line-height:1; letter-spacing:-0.04em; margin-bottom:0.3rem;
+}
+.plan-price span { font-size:1rem; color:var(--muted); font-weight:400; }
+.plan-desc { font-size:0.82rem; color:var(--muted); margin-bottom:1.5rem; line-height:1.5; }
+.plan-divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
+.plan-features { list-style:none; display:flex; flex-direction:column; gap:0.7rem; flex:1; }
+.plan-features li {
+  display:flex; align-items:flex-start; gap:8px;
+  font-size:0.83rem; color:var(--muted); line-height:1.4;
+}
+.feat-check { color:var(--green); flex-shrink:0; font-size:0.9rem; }
+.plan-btn {
+  margin-top:1.5rem; width:100%; padding:0.85rem;
+  border-radius:var(--r-sm); font-family:'Cabinet Grotesk',sans-serif;
+  font-weight:700; font-size:0.9rem; cursor:pointer; border:none;
+  transition:all 0.15s;
+}
+.plan-btn-outline {
+  background:transparent; color:var(--white);
+  border:1px solid var(--border);
+}
+.plan-btn-outline:hover { border-color:var(--white); }
+.plan-btn-filled {
+  background:var(--orange); color:var(--white);
+}
+.plan-btn-filled:hover { background:#e85200; }
+
+/* ─── STATS ─── */
+.stats-bar {
+  background:var(--ink-2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  padding:3rem 5%;
+}
+.stats-inner {
+  max-width:1200px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center;
+}
+.stat-n {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size:2.4rem; letter-spacing:-0.04em; line-height:1;
+}
+.stat-n em { color:var(--orange); font-style:normal; }
+.stat-l { font-size:0.82rem; color:var(--muted); margin-top:6px; }
+
+/* ─── CTA ─── */
+.cta-section {
+  padding:8rem 5%; text-align:center;
+  background:var(--ink);
+  position:relative; overflow:hidden;
+}
+.cta-glow {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:700px; height:300px;
+  background:radial-gradient(ellipse, rgba(255,92,0,0.1) 0%, transparent 65%);
+  pointer-events:none;
+}
+.cta-section h2 {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900;
+  font-size:clamp(2rem,5vw,4rem); line-height:1.05;
+  letter-spacing:-0.03em; margin-bottom:1rem; position:relative;
+}
+.cta-section h2 em { color:var(--orange); font-style:normal; }
+.cta-section p { color:var(--muted); font-size:1rem; margin-bottom:2rem; position:relative; }
+.cta-row {
+  display:flex; justify-content:center; gap:0.8rem; flex-wrap:wrap; position:relative;
+}
+.cta-input {
+  padding:0.9rem 1.4rem; border-radius:999px; border:1px solid var(--border);
+  background:var(--ink-2); color:var(--white); font-family:'Instrument Sans',sans-serif;
+  font-size:0.9rem; min-width:260px; outline:none;
+}
+.cta-input::placeholder { color:var(--muted); }
+.cta-input:focus { border-color:var(--orange); }
+.cta-note { font-size:0.75rem; color:var(--muted); margin-top:1rem; position:relative; }
+
+/* ─── FOOTER ─── */
+footer {
+  background:var(--ink-2); border-top:1px solid var(--border);
+  padding:2.5rem 5%;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+}
+.footer-logo {
+  font-family:'Cabinet Grotesk',sans-serif; font-weight:900; font-size:1.1rem;
+}
+.footer-logo em { color:var(--orange); font-style:normal; }
+.footer-links { display:flex; gap:1.5rem; }
+.footer-links a { font-size:0.8rem; color:var(--muted); text-decoration:none; }
+.footer-links a:hover { color:var(--white); }
+.footer-copy { font-size:0.75rem; color:var(--muted); }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .how-grid { grid-template-columns:1fr 1fr; }
+  .for-split { grid-template-columns:1fr; }
+  .ex-grid { grid-template-columns:1fr; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .stats-inner { grid-template-columns:repeat(2,1fr); }
+  nav .nav-links { display:none; }
+  .hero h1 { font-size:3rem; }
+}
+@media(max-width:580px){
+  .how-grid { grid-template-columns:1fr; }
+  .stats-inner { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Need<span class="logo-dot">It</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#for-you">For you</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#waitlist">Join waitlist</a></li>
+  </ul>
+  <a href="#waitlist" class="nav-pill">Get early access →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-circle"></div>
+  <div class="hero-bg-circle-2"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-badge">NEW</span>
+      The reverse influencer platform
+    </div>
+    <h1>You post<br><em>your need.</em><br><span class="line-alt">Brands compete.</span></h1>
+    <p class="hero-sub">Stop scrolling through ads from influencers you don't trust. Post your real problem — brands fight to give you the best solution. Real needs. Real answers. Zero fluff.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-orange">Post your first need →</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE FEED DEMO -->
+<div class="feed-demo">
+  <div class="feed-label">
+    <span class="live-dot"></span>
+    Live on NeedIt right now
+  </div>
+
+  <!-- Post 1 -->
+  <div class="post-card">
+    <div class="post-header">
+      <div class="avatar av-orange">AK</div>
+      <div class="post-meta">
+        <div class="post-user">Aditya K.</div>
+        <div class="post-time">12 minutes ago · Hyderabad</div>
+      </div>
+      <span class="need-tag">NEED</span>
+    </div>
+    <p class="post-text">"I need headphones with really good noise cancellation. My roommates are SO loud when I'm trying to study and I can't focus at all. Budget around ₹15,000."</p>
+    <div class="post-tags">
+      <span class="tag">headphones</span>
+      <span class="tag">noise cancellation</span>
+      <span class="tag">student</span>
+      <span class="tag">₹15K budget</span>
+    </div>
+    <div class="brand-responses">
+      <div class="brand-reply">
+        <div class="brand-logo logo-sony">Sony</div>
+        <div class="brand-reply-body">
+          <div class="brand-name">Sony India</div>
+          <div class="brand-text">Our WH-1000XM5 is built exactly for this — industry-leading ANC that blocks out voices, keyboard noise, and AC hum. Perfect for study sessions. ₹14,990 with student discount via our app.</div>
+          <div class="reply-actions">
+            <button class="vote-btn voted">▲ 247 helpful</button>
+            <span class="top-pick">⭐ Top pick this week</span>
+          </div>
+        </div>
+      </div>
+      <div class="brand-reply">
+        <div class="brand-logo logo-jbl">JBL</div>
+        <div class="brand-reply-body">
+          <div class="brand-name">JBL India</div>
+          <div class="brand-text">JBL Tune 770NC at ₹7,999 — 70 hours battery, solid ANC, and lightweight enough to wear all day. Best value noise-cancelling pick for students on a budget.</div>
+          <div class="reply-actions">
+            <button class="vote-btn">▲ 118 helpful</button>
+          </div>
+        </div>
+      </div>
+      <div class="brand-reply">
+        <div class="brand-logo logo-apple">Apple</div>
+        <div class="brand-reply-body">
+          <div class="brand-name">Apple India</div>
+          <div class="brand-text">AirPods Pro 2 delivers Transparency + ANC modes that adapt in real time to your environment. If you're in the Apple ecosystem, nothing comes close.</div>
+          <div class="reply-actions">
+            <button class="vote-btn">▲ 89 helpful</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post 2 — smaller -->
+  <div class="post-card">
+    <div class="post-header">
+      <div class="avatar av-blue">SR</div>
+      <div class="post-meta">
+        <div class="post-user">Sneha R.</div>
+        <div class="post-time">1 hour ago · Banjara Hills</div>
+      </div>
+      <span class="need-tag">NEED</span>
+    </div>
+    <p class="post-text">"I need comfortable running shoes for someone who stands 10–12 hours a day at work. My feet kill me by evening."</p>
+    <div class="post-tags">
+      <span class="tag">shoes</span><span class="tag">comfort</span><span class="tag">long hours</span>
+    </div>
+    <div class="brand-responses">
+      <div class="brand-reply">
+        <div class="brand-logo logo-nike">Nike</div>
+        <div class="brand-reply-body">
+          <div class="brand-name">Nike India</div>
+          <div class="brand-text">Nike Air Zoom Pegasus 41 is designed for all-day wear with React foam cushioning. Zero fatigue even after 12 hours — trusted by healthcare workers and retail staff.</div>
+          <div class="reply-actions">
+            <button class="vote-btn voted">▲ 312 helpful</button>
+            <span class="top-pick">⭐ Top pick</span>
+          </div>
+        </div>
+      </div>
+      <div class="brand-reply">
+        <div class="brand-logo logo-new">NB</div>
+        <div class="brand-reply-body">
+          <div class="brand-name">New Balance India</div>
+          <div class="brand-text">Our 990v6 with ENCAP midsole is literally built for people on their feet all day. Wider toe box, arch support, and zero break-in time needed.</div>
+          <div class="reply-actions">
+            <button class="vote-btn">▲ 204 helpful</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <span class="s-tag">How it works</span>
+    <h2 class="s-head">Three steps. That's it.</h2>
+    <p class="s-sub">No algorithms deciding what you see. No influencers paid to pretend they love something. Just your need, and brands fighting to solve it.</p>
+    <div class="how-grid">
+      <div class="how-card how-card-accent">
+        <span class="how-num">01</span>
+        <span class="how-icon">✍️</span>
+        <h3>Post your real need</h3>
+        <p>Write exactly what you're looking for — be specific. The more detail you give, the better brands can respond. Include budget, use case, location — whatever matters.</p>
+      </div>
+      <div class="how-card">
+        <span class="how-num">02</span>
+        <span class="how-icon">🏆</span>
+        <h3>Brands compete to help you</h3>
+        <p>Subscribed brands see your post and respond with why their product fits your need best. They're competing for your attention — not the other way around.</p>
+      </div>
+      <div class="how-card">
+        <span class="how-num">03</span>
+        <span class="how-icon">🗳️</span>
+        <h3>Community votes on the best answer</h3>
+        <p>Other users vote on the most helpful brand response. The best answers rise to the top. Brands with the best responses build real trust — not fake follower counts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR USERS AND BRANDS -->
+<section class="for-section" id="for-you">
+  <div class="section-inner">
+    <span class="s-tag">Who it's for</span>
+    <h2 class="s-head">Built for both sides of the table.</h2>
+    <p class="s-sub">Whether you're a consumer tired of fake ads or a brand tired of overpaying influencers — NeedIt fixes the problem.</p>
+    <div class="for-split">
+      <div class="for-card for-card-users">
+        <span class="for-label for-label-u">For consumers</span>
+        <h3>You deserve real answers, not paid promotions.</h3>
+        <p>Every ad you see online was paid for. Every influencer post was scripted. NeedIt flips the script — you tell brands what you need, and they come to you with real solutions.</p>
+        <ul class="for-list">
+          <li>Post any need — products, services, recommendations</li>
+          <li>Get responses from verified brand accounts only</li>
+          <li>Compare answers side by side before deciding</li>
+          <li>See what the community voted as most helpful</li>
+          <li>Leave reviews after you try a recommended product</li>
+          <li>Completely free to use — always</li>
+        </ul>
+      </div>
+      <div class="for-card for-card-brands">
+        <span class="for-label for-label-b">For brands</span>
+        <h3>Reach customers who already want what you sell.</h3>
+        <p>Stop paying influencers ₹5 lakhs for a 24-hour story. On NeedIt, every rupee you spend reaches someone who is actively looking for exactly your product right now.</p>
+        <ul class="for-list">
+          <li>Browse real customer needs filtered by category</li>
+          <li>Respond only to posts that match your product</li>
+          <li>Build trust through helpful answers, not paid ads</li>
+          <li>Track votes, clicks, and conversions per response</li>
+          <li>Get honest reviews from real buyers</li>
+          <li>Monthly subscription — no per-click costs, no auctions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLE POSTS -->
+<section class="examples" id="examples">
+  <div class="section-inner">
+    <span class="s-tag">Real use cases</span>
+    <h2 class="s-head">The kind of needs people post.</h2>
+    <p class="s-sub">From students in Hyderabad to professionals in Mumbai — real needs, real competition between brands.</p>
+    <div class="ex-grid">
+      <div class="ex-card">
+        <p class="ex-need">"Need a laptop under ₹60K that can handle video editing without overheating. I'm a CS student."</p>
+        <div class="ex-brands">
+          <div class="ex-brand"><span class="ex-brand-dot dot-green"></span>Asus responded with ROG Zephyrus lineup</div>
+          <div class="ex-brand"><span class="ex-brand-dot dot-blue"></span>Dell recommended XPS 15 with cooling upgrade</div>
+          <div class="ex-brand"><span class="ex-brand-dot dot-orange"></span>HP suggested Spectre x360 with trade-in offer</div>
+        </div>
+        <div class="ex-footer">
+          <span class="ex-responses">3 brand responses</span>
+          <span class="ex-votes">↑ 456 helpful votes</span>
+        </div>
+      </div>
+      <div class="ex-card">
+        <p class="ex-need">"Looking for a skincare routine for oily skin in Hyderabad's humidity. Nothing too expensive."</p>
+        <div class="ex-brands">
+          <div class="ex-brand"><span class="ex-brand-dot dot-purple"></span>Minimalist explained niacinamide routine</div>
+          <div class="ex-brand"><span class="ex-brand-dot dot-green"></span>Mamaearth offered sample kit + discount</div>
+          <div class="ex-brand"><span class="ex-brand-dot dot-orange"></span>Plum recommended pH-balanced cleanser set</div>
+        </div>
+        <div class="ex-footer">
+          <span class="ex-responses">5 brand responses</span>
+          <span class="ex-votes">↑ 289 helpful votes</span>
+        </div>
+      </div>
+      <div class="ex-card">
+        <p class="ex-need">"Need a good tiffin delivery service near Hitech City for office lunch. Homestyle food preferred."</p>
+        <div class="ex-brands">
+          <div class="ex-brand"><span class="ex-brand-dot dot-orange"></span>Swiggy highlighted curated homestyle partners</div>
+          <div class="ex-brand"><span class="ex-brand-dot dot-blue"></span>Box8 shared daily thali subscription plan</div>
+          <div class="ex-brand"><span class="ex-brand-dot dot-green"></span>iD Fresh listed pickup points near Hitech</div>
+        </div>
+        <div class="ex-footer">
+          <span class="ex-responses">4 brand responses</span>
+          <span class="ex-votes">↑ 178 helpful votes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-n">₹420<em>Cr</em></div>
+      <div class="stat-l">wasted on influencer marketing yearly in India</div>
+    </div>
+    <div>
+      <div class="stat-n">78<em>%</em></div>
+      <div class="stat-l">of Gen Z says influencer ads feel fake</div>
+    </div>
+    <div>
+      <div class="stat-n">3<em>x</em></div>
+      <div class="stat-l">higher conversion when brands respond to real needs</div>
+    </div>
+    <div>
+      <div class="stat-n">0<em>₹</em></div>
+      <div class="stat-l">cost to post a need as a consumer — forever</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-inner">
+    <span class="s-tag">Pricing for brands</span>
+    <h2 class="s-head">Pay us. Not influencers.</h2>
+    <p class="s-sub">A flat monthly subscription to access and respond to customer needs. No per-click charges. No auctions. No bidding wars.</p>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">₹4,999<span>/mo</span></div>
+        <div class="plan-desc">Perfect for small brands and local businesses testing the platform.</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✓</span>Access to 50 customer needs/month</li>
+          <li><span class="feat-check">✓</span>Up to 30 brand responses/month</li>
+          <li><span class="feat-check">✓</span>Basic analytics dashboard</li>
+          <li><span class="feat-check">✓</span>1 verified brand profile</li>
+          <li><span class="feat-check">✓</span>Community reviews visible</li>
+        </ul>
+        <button class="plan-btn plan-btn-outline">Get started</button>
+      </div>
+
+      <div class="pricing-card pricing-card-featured">
+        <span class="featured-badge">Most popular</span>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">₹14,999<span>/mo</span></div>
+        <div class="plan-desc">For brands serious about replacing influencer spend with real customer connections.</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✓</span>Unlimited need access</li>
+          <li><span class="feat-check">✓</span>Unlimited brand responses</li>
+          <li><span class="feat-check">✓</span>Advanced analytics + conversion tracking</li>
+          <li><span class="feat-check">✓</span>3 verified brand profiles</li>
+          <li><span class="feat-check">✓</span>Priority placement in responses</li>
+          <li><span class="feat-check">✓</span>Featured brand badge</li>
+        </ul>
+        <button class="plan-btn plan-btn-filled">Start free trial →</button>
+      </div>
+
+      <div class="pricing-card">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">Custom</div>
+        <div class="plan-desc">For large companies and conglomerates managing multiple product lines.</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✓</span>Everything in Growth</li>
+          <li><span class="feat-check">✓</span>Unlimited brand profiles</li>
+          <li><span class="feat-check">✓</span>API access for CRM integration</li>
+          <li><span class="feat-check">✓</span>Dedicated account manager</li>
+          <li><span class="feat-check">✓</span>Custom category targeting</li>
+          <li><span class="feat-check">✓</span>White-label reporting</li>
+        </ul>
+        <button class="plan-btn plan-btn-outline">Contact sales</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="cta-glow"></div>
+  <h2>Stop watching ads.<br><em>Start posting needs.</em></h2>
+  <p>Join thousands of people already on the waitlist. Free for consumers. Always.</p>
+  <div class="cta-row">
+    <input class="cta-input" type="email" placeholder="your@email.com">
+    <button class="btn-orange">Join the waitlist →</button>
+  </div>
+  <p class="cta-note">No spam. Brands will never DM you directly. You stay in control. 🙏</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Need<em>It</em></div>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">For Brands</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+  <p class="footer-copy">© 2025 NeedIt. Made for real people, not algorithms.</p>
+</footer>
+
+<script>
+  // Vote button toggle
+  document.querySelectorAll('.vote-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const wasVoted = this.classList.contains('voted');
+      const text = this.textContent;
+      const match = text.match(/(\d+)/);
+      if (!match) return;
+      let count = parseInt(match[1]);
+      if (wasVoted) {
+        this.classList.remove('voted');
+        count--;
+      } else {
+        this.classList.add('voted');
+        count++;
+      }
+      this.textContent = `▲ ${count} helpful`;
+    });
+  });
+</script>
+
+</body>
+</html>
